@@ -61,13 +61,44 @@ Ollama Cloud independently of the model powering your Codex conversation. See th
 Cloud checks send two short inference requests per distinct selected model, consuming Ollama usage.
 They verify authentication, a tool call, and the follow-up tool result. The same checks run before each
 match, so bad keys and unavailable models fail before waiting for the game. A model list alone does not
-verify authenticated inference. When using an existing `OLLAMA_API_KEY` environment variable, the terminal runner
+verify authenticated inference. When using an existing `OLLAMA_API_KEY` environment variable, the launcher
 prefers the process value, then the encrypted file, then the Windows user environment variable.
 
 For other operating systems, create a virtual environment with Python 3.11 or later, install
 `requirements.txt`, set `OLLAMA_API_KEY` in your shell, and run `python arena.py` from this directory.
 
 ## Running a match
+
+### Desktop launcher on Windows
+
+Double-click **`OpenRA-LLM-Arena.exe`** in the repository root. It opens the Red Alert game and starts
+the Ollama agents, using the saved Windows user `OLLAMA_API_KEY`. No terminal commands are needed.
+Keep the EXE in this folder with `bin/` and `llm-arena/`; use a shortcut if you want to launch it elsewhere.
+This is a launcher for the existing checkout, not a standalone copy of the entire game and Python runtime.
+
+The launcher shows live output, connection errors, and whether the agents are waiting or playing. Create a
+Skirmish with **GLM (LLM)** and **DeepSeek (LLM)** on opposing teams, choose Spectator, and start the game.
+The agents automatically wait for subsequent matches, including an in-game restart. A new match resets
+the plans and reloads the map and tech tree briefing. Temporary bridge interruptions or a paused game
+do not terminate the commanders. Responses from the previous match are discarded, and commands are
+bound to the last observed match so they cannot be applied to a replacement game.
+**Restart agents** stops the current agent session before starting a new one; **Start / Retry** is shown
+when agents are stopped. **Open logs** opens the current run's logs.
+**Stop agents** and closing the launcher stop its agents and MCP subprocesses; the game stays open.
+Closing the game also stops the agents. Opening the launcher again reuses an existing game window from
+this checkout. It does not stop agents or games launched separately.
+
+Launcher logs and control files are kept under the ignored `.local/launcher/` directory. Keys are read at
+runtime and never embedded in the EXE. The local runtime and downloaded game data under `.local/` are
+required; the launcher validates them before starting. Building it does not require a .NET SDK:
+
+```powershell
+powershell -NoProfile -ExecutionPolicy Bypass -File .\llm-arena\launcher\build.ps1 -Verify
+```
+
+Close the launcher before rebuilding. `-Verify` also runs native Windows argument-parsing regression
+tests, including checkout folders with spaces and a trailing backslash, and a process restart test that
+checks shutdown ordering, game preservation and separate session logs.
 
 ### Terminal workflow
 
@@ -94,7 +125,7 @@ Transcripts are written to `logs/<timestamp>/<agent>.jsonl`.
 | `--max-tool-rounds` | `8` | LLM/tool round trips per turn |
 | `--check-cloud` | off | Check MCP and authenticated tool inference, then exit |
 | `--check-mcp` | off | Check both MCP servers without a key or game |
-| `--watch-games` | off | Wait for subsequent matches until stopped |
+| `--watch-games` | off | Wait for subsequent matches; enabled by the desktop launcher |
 
 API model names must match `--list-models`. Direct Cloud names such as `glm-5.3` differ from the
 `:cloud` names used by the signed-in local Ollama app.
@@ -103,7 +134,8 @@ API model names must match `--list-models`. Direct Cloud names such as `glm-5.3`
 
 Run the offline tests from the repository root. They cover authentication failures, quota and network
 errors, missing models, tool inference checks, and a commander using the real MCP subprocess with a
-simulated game bridge and simulated Ollama responses. Match restart tests cover briefing and plan resets, stale Cloud
+simulated game bridge and simulated Ollama responses. Launcher tests also verify parent-exit detection
+and cancellation of a real MCP session. Match restart tests cover briefing and plan resets, stale Cloud
 responses, state timeouts and socket reconnection without duplicate orders. They do not require a key
 or consume Cloud usage.
 
