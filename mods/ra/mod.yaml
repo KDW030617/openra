@@ -73,6 +73,7 @@ MapFolders:
 Rules:
 	ra|rules/misc.yaml
 	ra|rules/ai.yaml
+	ra|rules/llm-ai.yaml
 	ra|rules/player.yaml
 	ra|rules/palettes.yaml
 	ra|rules/world.yaml
@@ -178,6 +179,7 @@ FluentMessages:
 	ra|fluent/chrome.ftl
 	ra|fluent/hotkeys.ftl
 	ra|fluent/rules.ftl
+	ra|fluent/llm-ai.ftl
 
 FluentLanguages:
 	ko:

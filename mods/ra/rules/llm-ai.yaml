@@ -1,0 +1,21 @@
+Player:
+	ModularBot@LlmGlm:
+		Name: bot-llm-glm.name
+		Type: llm-glm
+	ModularBot@LlmDeepSeek:
+		Name: bot-llm-deepseek.name
+		Type: llm-deepseek
+	GrantConditionOnBotOwner@llm-glm:
+		Condition: enable-llm-glm
+		Bots: llm-glm
+	GrantConditionOnBotOwner@llm-deepseek:
+		Condition: enable-llm-deepseek
+		Bots: llm-deepseek
+	LlmBridgeBotModule@llm-glm:
+		RequiresCondition: enable-llm-glm
+		Port: 7701
+	LlmBridgeBotModule@llm-deepseek:
+		RequiresCondition: enable-llm-deepseek
+		Port: 7702
+	HarvesterBotModule@llm:
+		RequiresCondition: enable-llm-glm || enable-llm-deepseek
