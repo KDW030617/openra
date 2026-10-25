@@ -458,6 +458,7 @@ label-profile-section-header = Profile
 label-player-container = Player Name:
 label-playercolor-container-color = Preferred Color:
 label-display-section-header = Display
+label-language-dropdown = Language
 label-battlefield-camera-dropdown = Battlefield Camera:
 label-ui-scale-dropdown = UI Scale:
 checkbox-cursordouble-container = Increase Cursor Size
